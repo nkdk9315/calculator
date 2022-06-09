@@ -23,7 +23,7 @@
     border: 1px solid;
     flex: auto;
 }
-.row div {
+.row button {
     flex: auto;
     border: 1px solid;
     display: flex;
