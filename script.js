@@ -21,10 +21,10 @@ function operate(operator, a, b) {
     if (operator === "-") {
         return subtract(a, b);
     }
-    if (operator === "*") {
+    if (operator === "×") {
         return multiply(a, b);
     }
-    if (operator === "/") {
+    if (operator === "÷") {
         return divide(a, b);
     }
 }
