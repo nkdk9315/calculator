@@ -29,11 +29,14 @@ function operate(operator, a, b) {
     }
 }
 // 演算子の前の数字
-let firstNumber;
+let firstNumber = "";
 // 演算子のあとの数字
-let lastNumber;
+let lastNumber = "";
 // 演算子
-let operator;
+let operator = "";
+// displayの中のh2要素を取得
+const display = document.querySelector(".display");
+const h2 = display.querySelector("#expression");
 
 // 数字キーのイベントリスナー
 let numbers = document.querySelectorAll(".number");
@@ -55,42 +58,94 @@ clear.addEventListener("click", pressAllClear);
 let dot = document.querySelector("#dot");
 dot.addEventListener("click", pressDot);
 
-// パーセントキーのイベントリスナー
-let percent = document.querySelector("#percent");
-percent.addEventListener("click", pressPercent);
+// マイナスキーのイベントリスナー
+let minus = document.querySelector("#minus");
+minus.addEventListener("click", pressMinus);
 
 // 数字をクリックすると実行する関数
 function pressNumber () {
-    // 演算子変数に演算子が入っていない場合、演算子の前の数字の桁をそのまま増やす
-    // 演算子変数に演算子が入っていた場合、演算子のあとの数字の桁を増やす
-    const div = document.createElement("div");
-    div.innerText = this.innerText;
-    const display = document.querySelector(".display"); 
-    display.appendChild(div);
+    // クリックされた数字を取得
+    let currentNumber = this.innerText;
+    // operatorに演算子が入っていない場合、firstNumberの桁をそのまま増やし、画面に表示
+    if (!operator) {
+        firstNumber += currentNumber;
+        h2.textContent = firstNumber;
+    }
+    // operatorに演算子が入っていた場合、演算子のあとの数字の桁を増やし、画面に表示
+    if (operator) {
+        lastNumber += currentNumber;
+        h2.textContent = `${firstNumber} ${operator} ${lastNumber}`;
+    }
 }
 // イコールが押されたとき実行される関数
 function pressEqual () {
     // 演算子のあとの数字があれば、それまでの式を計算し結果を表示
+    if (lastNumber) {
+        firstNumber = operate(operator, Number(firstNumber), Number(lastNumber));
+        h2.textContent = firstNumber;
+        // firstNumber以外を初期化
+        lastNumber = "";
+        operator = "";
+    }
 }
 // 演算子のキーが押されたときに実行される関数
 function pressOperator() {
-    // firstNumberに数字があり、operator変数に演算子が入っていない場合、演算子を入れる
+    // クリックされた演算子を取得
+    let currentOperator = this.innerText;
+    // firstNumberに数字があり、operator変数に演算子が入っていない場合、演算子を入れ、画面に表示
+    if (firstNumber && !operator) {
+        operator = currentOperator;
+        h2.textContent = `${firstNumber} ${operator}`;
+    }
     // lastNumberがある場合、それまでの式を計算し、その結果をfirstNumberに入れ、operator変数に演算子を入れる。このとき、firstNumberを画面に表示
+    if (lastNumber) {
+        firstNumber = operate(currentOperator, Number(firstNumber), Number(lastNumber));
+        operator = currentOperator;
+        h2.textContent = `${firstNumber} ${operator}`;
+        // lastNumberを初期化
+        lastNumber = "";
+    }
 }
 // ACキーが押されたときの関数
 function pressAllClear() {
-    // lastNumber, firstNumber, operatorのすべてを空にする
-
+    // lastNumber, firstNumber, operatorのすべてを空にし、表示されている式も消す
+    lastNumber = "";
+    firstNumber = "";
+    operator = "";
+    h2.textContent = "";
 }
 // ドットキーが押されたときの関数
 function pressDot() {
-    // firstNumberに数字があり、operatorに数字が入っていない場合,firstNumberの数字に少数点を追加
-
+    // firstNumberに数字があり、operatorに数字が入っていない場合,firstNumberの数字に少数点を追加し表示
+    if (firstNumber && !operator) {
+        firstNumber += ".";
+        h2.textContent = firstNumber;
+    }
     // lastNumberに数字がある場合、lastNumberに小数点を追加
+    if (lastNumber) {
+        lastNumber += ".";
+        h2.textContent = `${firstNumber} ${operator} ${lastNumber}`;
+    };
 }
-// パーセントキーが押されたときの関数
-function pressPercent() {
-    // firstNumberに数字があり、operatorに演算子が入っていない場合にfirstNumberを１００分の１にする
-
-    // lastNumberに数字がある場合、lastNumberの数字を１００分の１にする
+// マイナスキーが押されたときの関数
+function pressMinus() {
+    // firstNumberに数字があり、operatorに演算子が入っていない場合にfirstNumberにマイナスをつける
+    if (firstNumber && !operator) {
+        // マイナスが既についていた場合は取り除く
+        if (firstNumber.includes("-")) {
+            firstNumber = firstNumber.slice(1);
+        } else {
+            firstNumber = "-" + firstNumber;
+        }
+        h2.textContent = firstNumber;
+    }
+    // lastNumberに数字がある場合、lastNumberにマイナスをつける
+    if (lastNumber) {
+        if (lastNumber.includes("-")) {
+            lastNumber = lastNumber.slice(1);
+        } else {
+            lastNumber = "-" + lastNumber;
+        }
+        h2.textContent = `${firstNumber} ${operator} ${lastNumber}`;
+    }
 }
