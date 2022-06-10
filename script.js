@@ -64,16 +64,37 @@ minus.addEventListener("click", pressMinus);
 
 // 数字をクリックすると実行する関数
 function pressNumber () {
+    // 12桁以上の数字が入力された場合は警告メッセージを表示し、入力できないようにする
+    if (firstNumber.length > 12 || lastNumber.length > 12) {
+        window.alert("Numbers over 12 digits are not accepted.");
+        return;
+    }
     // クリックされた数字を取得
     let currentNumber = this.innerText;
+
+    // operatorに÷が入っていて, lastNumberがないときは０を入力させない
+    if (operator === "÷" && !lastNumber && currentNumber === "0") {
+        return;
+    }
+    // 
     // operatorに演算子が入っていない場合、firstNumberの桁をそのまま増やし、画面に表示
     if (!operator) {
-        firstNumber += currentNumber;
-        h2.textContent = firstNumber;
+        //firstNumberが０のときはfirstNumberに現在の数字を直接代入
+        if (firstNumber === "0") {
+            firstNumber = currentNumber;            
+        } else {
+            firstNumber += currentNumber;
+        }
+        h2.textContent = firstNumber;       
     }
     // operatorに演算子が入っていた場合、演算子のあとの数字の桁を増やし、画面に表示
     if (operator) {
-        lastNumber += currentNumber;
+        // lastNumberが０のときはlastNumberに現在の数字を直接代入
+        if (lastNumber === "0") {
+            lastNumber = currentNumber;
+        } else {
+            lastNumber += currentNumber;
+        }
         h2.textContent = `${firstNumber} ${operator} ${lastNumber}`;
     }
 }
@@ -129,8 +150,11 @@ function pressDot() {
 }
 // マイナスキーが押されたときの関数
 function pressMinus() {
+    //　firstNumberが０のときはマイナスはつけない
+    if (firstNumber === "0" || lastNumber === "0") return;
     // firstNumberに数字があり、operatorに演算子が入っていない場合にfirstNumberにマイナスをつける
     if (firstNumber && !operator) {
+        
         // マイナスが既についていた場合は取り除く
         if (firstNumber.includes("-")) {
             firstNumber = firstNumber.slice(1);
@@ -141,6 +165,7 @@ function pressMinus() {
     }
     // lastNumberに数字がある場合、lastNumberにマイナスをつける
     if (lastNumber) {
+        // 既にマイナスがついていれば取り除く
         if (lastNumber.includes("-")) {
             lastNumber = lastNumber.slice(1);
         } else {
