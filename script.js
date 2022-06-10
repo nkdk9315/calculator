@@ -51,8 +51,8 @@ let operators = document.querySelectorAll(".operator");
 operators.forEach(operator => operator.addEventListener("click", pressOperator));
 
 // ACキーのイベントリスナー
-let clear = document.querySelector("#clear");
-clear.addEventListener("click", pressAllClear);
+let clearAll = document.querySelector("#clear-all");
+clearAll.addEventListener("click", pressAllClear);
 
 // ドットのイベントリスナー
 let dot = document.querySelector("#dot");
@@ -62,6 +62,9 @@ dot.addEventListener("click", pressDot);
 let minus = document.querySelector("#minus");
 minus.addEventListener("click", pressMinus);
 
+// クリアーキーのイベントリスナー
+let clear = document.querySelector("#clear");
+clear.addEventListener("click", pressClear);
 // 数字をクリックすると実行する関数
 function pressNumber () {
     // 12桁以上の数字が入力された場合は警告メッセージを表示し、入力できないようにする
@@ -100,10 +103,10 @@ function pressNumber () {
 }
 // イコールが押されたとき実行される関数
 function pressEqual () {
-    // 演算子のあとの数字があれば、それまでの式を計算し結果を表示
+    // 演算子のあとの数字があれば、それまでの式を計算し結果を文字に変換し表示
     if (lastNumber) {
-        firstNumber = operate(operator, Number(firstNumber), Number(lastNumber));
-        h2.textContent = firstNumber;
+        firstNumber = String(operate(operator, Number(firstNumber), Number(lastNumber)));
+        h2.textContent = String(firstNumber);
         // firstNumber以外を初期化
         lastNumber = "";
         operator = "";
@@ -118,9 +121,9 @@ function pressOperator() {
         operator = currentOperator;
         h2.textContent = `${firstNumber} ${operator}`;
     }
-    // lastNumberがある場合、それまでの式を計算し、その結果をfirstNumberに入れ、operator変数に演算子を入れる。このとき、firstNumberを画面に表示
+    // lastNumberがある場合、それまでの式を計算し、その結果を文字に変換しfirstNumberに入れ、operator変数に演算子を入れる。このとき、firstNumberを画面に表示
     if (lastNumber) {
-        firstNumber = operate(currentOperator, Number(firstNumber), Number(lastNumber));
+        firstNumber = String(operate(currentOperator, Number(firstNumber), Number(lastNumber)));
         operator = currentOperator;
         h2.textContent = `${firstNumber} ${operator}`;
         // lastNumberを初期化
@@ -171,6 +174,24 @@ function pressMinus() {
         } else {
             lastNumber = "-" + lastNumber;
         }
+        h2.textContent = `${firstNumber} ${operator} ${lastNumber}`;
+    }
+}
+
+function pressClear() {
+    // firstNumberだけ数字があるとき
+    if (firstNumber && !operator) {
+        firstNumber = firstNumber.slice(0, firstNumber.length - 1);
+        h2.textContent = firstNumber;
+    }
+    // 演算子まであるとき
+    if (operator && !lastNumber) {
+        operator = ""
+        h2.textContent = firstNumber;
+    }
+    // lastNumberまで数字があるとき
+    if (lastNumber) {
+        lastNumber = lastNumber.slice(0, lastNumber.length - 1);
         h2.textContent = `${firstNumber} ${operator} ${lastNumber}`;
     }
 }
